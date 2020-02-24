@@ -11,7 +11,7 @@
 #include <vector>
 int main()
 {
-    std::ifstream input("(1) The Hunger Games.txt");
+    std::ifstream input("Source.txt");
     std::map<std::string, int> m;
     std::string s;
     while (getline(input, s, ' ')) {
