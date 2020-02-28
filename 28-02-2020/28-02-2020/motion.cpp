@@ -27,6 +27,10 @@ int main() {
 		//window.clear(sf::Color::White);
 		window.clear(sf::Color::Color(50, 50, 50));
 		window.pollEvent(event);
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+			//left mouse button is pressed: shoot
+			sf::Vector2f 
+		}
 		switch (event.type) {
 		case (sf::Event::Closed):
 			window.close();
@@ -44,6 +48,8 @@ int main() {
 			if (event.key.code == sf::Keyboard::Down && circle.getPosition().y < 500) {
 				circle.move(0, 1);
 			}
+			break;
+		default:
 			break;
 		}
 		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && circle.getPosition().x > 0) {
