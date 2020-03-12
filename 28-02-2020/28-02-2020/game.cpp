@@ -48,7 +48,6 @@ private:
 
 int main() {
 	sf::RenderWindow window(sf::VideoMode(800, 600), "My window");
-	//sf::CircleShape circle(50);
 	sf::Texture texture;
 	texture.loadFromFile("Quake-Live-256.png");
 	sf::Sprite circle(texture);
@@ -57,8 +56,6 @@ int main() {
 	sf::Vector2u circleSize = circle.getTexture()->getSize();
 	circle.setOrigin(circleSize.x / 2, circleSize.y / 2);
 	std::list<Bullet> bullets;
-	//chrono::steady_clock::time_point t;
-	//time_t last_bullet_time = time(nullptr);
 	auto last_bullet_time = std::chrono::steady_clock::now();
 	while (window.isOpen()) {
 		sf::Event event;
@@ -66,20 +63,9 @@ int main() {
 		sf::Vector2f center = circle.getPosition();
 		sf::Vector2f d = sf::Vector2f(mousePosition.x, mousePosition.y) - center;
 		circle.setRotation(90 + atan2f(d.y, d.x) * 180 / Pi);
-		//window.clear(sf::Color::White);
 		window.clear(sf::Color::Color(50, 50, 50));
-		//time(&last_bullet_time);
 		float timedif = 100;
 		for (auto it = begin(bullets); it != end(bullets); it++) {
-			/*if (it->if_time()) {
-				window.draw(it->get_bullet());
-				it->move();
-			}
-			if (it->to_erase()) {
-				auto tempit = next(it);
-				bullets.erase(it);
-				it = tempit;
-			}*/
 			window.draw(it->get_bullet());
 			it->move();
 			if (it->to_erase()) {
@@ -90,14 +76,11 @@ int main() {
 		}
 		window.pollEvent(event);
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-			//left mouse button is pressed: shoot
-			//std::cout << d.x << " " << d.y << std::endl;
 			auto dist = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - last_bullet_time).count();
 			if (dist >= timedif) {
 				bullets.push_back({ circle, d });
 				last_bullet_time = std::chrono::steady_clock::now();
 			}
-			//sf::Vector2f 
 		}
 		switch (event.type) {
 		case (sf::Event::Closed):
@@ -120,18 +103,6 @@ int main() {
 		default:
 			break;
 		}
-		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && circle.getPosition().x > 0) {
-			circle.move(-1, 0);
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && circle.getPosition().x < 700) {
-			circle.move(1, 0);
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && circle.getPosition().y > 0) {
-			circle.move(0, -1);
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && circle.getPosition().y < 500) {
-			circle.move(0, 1);
-		}*/
 		window.draw(circle);
 		window.display();
 	}
