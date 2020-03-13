@@ -39,6 +39,8 @@ public:
 		circles.push_back(s);
 		recalc();
 	}
+
+
 	void recalc() {
 		auto _zero_it_ = begin(points);
 		for (auto it = begin(points); it != end(points); it++) {
@@ -49,25 +51,56 @@ public:
 				int move = 5;
 				for (int i = 0; i < __LINE_NUMBER__; i++) {
 					v[i].append(sf::Vertex(sf::Vector2f(curpos.x + move * cos(i * one_angle), curpos.y + move * sin(i * one_angle)), sf::Color::Black));
-					sf::Vector2f cur_line_pos = v[i].operator[](v[i].getVertexCount()).position;
+					/*int pos_iter_ = v[i].getVertexCount() - 1;
+					if (pos_iter_ < 0)
+						pos_iter_ = 0;*/
+					sf::Vector2f cur_line_pos = static_cast<sf::Vector2f>(curpos);//v[i].operator[](pos_iter_).position;
 					std::cout << cur_line_pos.x << " " << cur_line_pos.y << std::endl;
 					while (cur_line_pos.x >= 0 && cur_line_pos.x <= 1024
 						&& cur_line_pos.y >= 0 && cur_line_pos.y <= 768) {
-						//std::cout << "turn" << std::endl;
+						std::cout << "turn " << cur_line_pos.x << " " << cur_line_pos.y << std::endl;
 						float Ex = 0, Ey = 0;
-						for (const auto& i : points) {
-							int sign = i.sign ? 1 : -1;
+						for (const auto& in : points) {
+							int sign = in.sign ? 1 : -1;
 							/*Ex += sign / ((i.pos.x - cur_line_pos.x) * (i.pos.x - cur_line_pos.x));
 							Ey += sign / ((i.pos.y - cur_line_pos.y) * (i.pos.y - cur_line_pos.y));*/
-							auto vec = cur_line_pos - static_cast<sf::Vector2f>(i.pos);
+							auto vec = cur_line_pos - static_cast<sf::Vector2f>(in.pos);
 							auto mod_ = sqrt(vec.x * vec.x + vec.y * vec.y);
-							auto E = sign / mod_;
-							Ex += E * vec.x / mod_;
-							Ey += E * vec.y / mod_;
+							/*if (1 / mod_ == 0) {
+								mod_ = 1;
+							}*/
+							if (mod_ == 0) {
+								mod_ = 0.1;
+							}
+							auto xsign = signbit(vec.x);
+							if (cur_line_pos.x < in.pos.x) {
+								xsign = -1;
+							}
+							else {
+								xsign = 1;
+							}
+							auto ysign = signbit(vec.y);
+							if (cur_line_pos.y < in.pos.y) {
+								ysign = -1;
+							}
+							else {
+								ysign = 1;
+							}
+							auto E = sign / mod_ / mod_;
+							std::cout << "E = " << E << std::endl;
+							Ex += xsign * E * vec.x / mod_;
+							Ey += ysign * E * vec.y / mod_;
 						}
 						float mod = sqrt(Ex * Ex + Ey * Ey);
-						v[i].append(sf::Vertex{ sf::Vector2f{cur_line_pos.x + move * Ex / mod, cur_line_pos.y + move * Ey / mod}, sf::Color::Black });
-						sf::Vector2f cur_line_pos = v[i].operator[](v[i].getVertexCount()).position;
+						if (Ex == 0)
+							Ex = 5;
+						if (Ey == 0)
+							Ey = 5;
+						std::cout << "first " << cur_line_pos.x << " " << cur_line_pos.y << std::endl;
+						cur_line_pos = sf::Vector2f{cur_line_pos.x + 100 * Ex, cur_line_pos.y + 100 * Ey};
+						v[i].append(sf::Vertex{ cur_line_pos, sf::Color::Black });
+						cur_line_pos = v[i].operator[](v[i].getVertexCount() - 1).position;
+						std::cout << "second " << cur_line_pos.x << " " << cur_line_pos.y << std::endl;
 					}
 				}
 				size_t dif = it - _zero_it_;
